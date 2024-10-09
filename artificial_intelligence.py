@@ -3,12 +3,20 @@ import matplotlib.pyplot as plt
 import streamlit as st
 from sklearn.preprocessing import StandardScaler
 import json
-
-
+import zipfile
+import os
 
 def graph_models():
+    # Caminho do arquivo zip e do arquivo pkl dentro do zip
+    zip_file_path = 'modelos_treinados.zip'
+    pkl_file_name = 'modelos_treinados.pkl'
+    
+    # Descompactar o arquivo zip
+    with zipfile.ZipFile(zip_file_path, 'r') as zip_ref:
+        zip_ref.extractall('modelos_treinados')  # Extrai para a pasta 'modelos_treinados'
+
     # Carregar o arquivo pkl com os modelos treinados
-    modelos_treinados = joblib.load('modelos_treinados.pkl')
+    modelos_treinados = joblib.load(os.path.join('modelos_treinados', pkl_file_name))
 
     # Extrair e imprimir as métricas de acurácia dos modelos
     resultados = {nome: info['accuracy'] for nome, info in modelos_treinados.items()}
@@ -34,7 +42,6 @@ def graph_models():
 
     # Exibir o gráfico no Streamlit
     st.pyplot(fig)
-
 
 def plot_shap_summary():
     # Carregar as informações do gráfico a partir do arquivo JSON
